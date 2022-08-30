@@ -64,18 +64,72 @@ def cap_ip():
 
 ####### Testar porta especifica
 
+
+def cap_ban():
+	host = input("\n[#] Host >> ")
+	porta = int(input("[#] Porta >> "))
+
+	
+	if porta == 21:
+		s = socket.socket()
+		s.settimeout(3)
+		s.connect((host, porta))
+		rf = s.recv(1030)
+		print ("\033[32m" + "\nBanner capturado" + "/033[0;0m", rf, "\n")
+
+	if porta == 22:
+		s = socket.socket()
+		s.settimeout(3)
+		s.connect((host, porta))
+		rf = s.recv(1030)
+		print ("\033[32m" + "\nBanner capturado" + "/033[0;0m", rf, "\n")
+	
+	if porta == 25:
+		s = socket.socket()
+		s.settimeout(3)
+		s.connect((host, porta))
+		rf = s.recv(1030)
+		print ("\033[32m" + "\nBanner capturado" + "/033[0;0m", rf, "\n")
+	
+		
+	if porta == 80:
+		s = socket.socket()
+		s.connect((host, porta))
+		s.send(b'GET /\n\n')
+		print("\n")
+		print(s.recv(10000))
+	
+		
+	if porta == 443:
+		try:
+			s = socket.socket()
+			s.connect((host, porta))
+			s.send(b'GET /\n\n')
+			print("\n")
+			print(s.recv(10000))
+		except:
+			print("conexão não estabelecida.")
+		
+	else:
+		print("  ")
+
+
+
+
+
 def porth():
 	try:
 		host = input("\n[#] Host >> ")
-		port = int(input("[#] Porta >> "))
+		porta = int(input("[#] Porta >> "))
 		sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 		sock.settimeout(4)
-		if sock.connect_ex((host,port)):
-			str = "\033[31mestá fechada. \033[0;0m"
-			print ("\nPorta", port, str)
-		else:
+		result = sock.connect_ex((host, porta))
+		if result == 0:
 			str = "\033[32mestá aberta. \033[0;0m"
-			print ("\nPorta", port, str)
+			print ("\nPorta", porta, str)
+		else:
+			str = "\033[31mestá fechada. \033[0;0m"
+			print ("\nPorta", porta, str)
 	except:
 		print("\nComando inválido.")
     	
@@ -84,16 +138,67 @@ def porth():
 
 ####### Localizador de IP
 
+
+
 def geo_ip():
+	try:
+		lista1 = []
 		host = input("\n[#] Host >> ")
-		api = "http://ip-api.com/"
-		host = api + host
-		print("\n\n")
-		r = requests.get(host)
-		r = r.text
-		print (r, "\n")
+		host = socket.gethostbyname(host)
+		host1 = "\033[32m" + host + "\033[0;0m"
+		host1 = "   IP: " + host1
+		lista1.append(host1)
+		################        
+		pais = "https://ipapi.co/" + host + "/country_name/"
+		pais = requests.get(pais)
+		pais = pais.text
+		pais = "\033[32m" + pais + "\033[0;0m"
+		pais = "   Pais: " + pais
+		lista1.append(pais)
+        #####################
+		estado = "https://ipapi.co/" + host + "/region/"
+		estado = requests.get(estado)
+		estado = estado.text
+		estado = "\033[32m" + estado + "\033[0;0m"
+		estado = "   Estado: " + estado
+		lista1.append(estado)
+		#####################
+		cidade = "https://ipapi.co/" + host + "/city/"
+		cidade = requests.get(cidade)
+		cidade = cidade.text
+		cidade = "\033[32m" + cidade + "\033[0;0m"
+		cidade = "   Cidade: " + cidade
+		lista1.append(cidade)
+		#####################
+		latlong = "https://ipapi.co/" + host + "/latlong/"
+		latlong = requests.get(latlong)
+		latlong = latlong.text
+		latlong = "\033[32m" + latlong + "\033[0;0m"
+		latlong = "   Latitude e Longetude: " + latlong
+		lista1.append(latlong)
+		####################
+		org = "https://ipapi.co/" + host + "/org/"
+		org = requests.get(org)
+		org = org.text
+		org = "\033[32m" + org + "\033[0;0m"
+		org = "   Organização: " + org
+		lista1.append(org)
+		####################
+		asn = "https://ipapi.co/" + host + "/asn/"
+		asn = requests.get(asn)
+		asn = asn.text
+		asn = "\033[32m" + asn + "\033[0;0m"
+		asn = "   ASN: " + asn
+		lista1.append(asn)
+	
+	
+	except:
+		print("Verifique sua conexão.")
 
-
+	print("\n")
+	for n in lista1:
+		print(n)
+	print("\n")
 
 
 
@@ -150,7 +255,7 @@ def cap_ban():
 
 
 
-####### Scanner de Portas:
+#######  PSCAN   ###### Scanner de Portas:
 
 def port_scan():
 	print("\n\n      ∆ ---------- PSCAN PROJECT ---- 1.0 \n\n")
@@ -266,30 +371,28 @@ def link_extrator():
 def hórus():
 	
 	def func1(porta, disp):
-		global dd
+		global mediador1
 		global x
 		
 		lista = []
 		
 		def test_b(host):
-			global dd
+			global mediador1
 			global x
 			
 			sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 			result = sock.connect_ex((host, porta))
 			sock.settimeout(3)
 			if result == 0:
-				dd += 1
-				print(host, "porta", porta, "\033[32m", "aberta", "\033[0;0m")
-				if dd == disp:
+				mediador1 += 1
+				print("PORTA", porta, "\033[32m", "ABERTA", "\033[0;0m" ,"N","\033[33m", mediador1, "\033[0;0m", "  IP:", host)
+				if mediador1 == disp:
 					x = False
 				lista.append(host)
-			else:
-				print(host, "porta", porta, "\033[30m", "fehcada", "\033[0;0m")
-				
+
 		
 		def capturarh():
-			a = (random.randint(1,250))
+			a = (random.randint(1,220))
 			b = (random.randint(1,200))
 			c = (random.randint(1,200))
 			d = (random.randint(1,200))
@@ -303,12 +406,13 @@ def hórus():
 			except:
 				print("NOVO ERRO")
 		
-		dd = 0
+
+		mediador1 = 0
 		x = True
 		threads = []
 		
 		while x == True:
-			time.sleep(0.05)
+			time.sleep(0.000000005)
 			try:
 				t = threading.Thread(target=capturarh)
 				try:
@@ -318,8 +422,9 @@ def hórus():
 					continue
 			except:
 				continue
+
 		
-		time.sleep(7)
+		time.sleep(10)
 		print("\n\n\n\n")
 		print("Dispositivos Rastreados")
 		print("\n\n")
@@ -594,17 +699,18 @@ def hórus():
 nomep = "\033[36m" + "DRICK FRAMEWORK" "\033[0;0m"
 
 
-print("\n\n\n▄▄▄▄▄▄▄▄▄▄   ▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄▄  ▄    ▄ ")
-print("▐░░░░░░░░░░▌ ▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌▐░▌  ▐░▌")
-print("▐░█▀▀▀▀▀▀▀█░▌▐░█▀▀▀▀▀▀▀█░▌ ▀▀▀▀█░█▀▀▀▀ ▐░█▀▀▀▀▀▀▀▀▀ ▐░▌ ▐░▌") 
-print("▐░▌       ▐░▌▐░▌       ▐░▌     ▐░▌     ▐░▌          ▐░▌▐░▌")  
-print("▐░▌       ▐░▌▐░█▄▄▄▄▄▄▄█░▌     ▐░▌     ▐░▌          ▐░▌░▌")   
-print("▐░▌       ▐░▌▐░░░░░░░░░░░▌     ▐░▌     ▐░▌          ▐░░▌")    
-print("▐░▌       ▐░▌▐░█▀▀▀▀█░█▀▀      ▐░▌     ▐░▌          ▐░▌░▌")   
-print("▐░▌       ▐░▌▐░▌     ▐░▌       ▐░▌     ▐░▌          ▐░▌▐░▌")  
-print("▐░█▄▄▄▄▄▄▄█░▌▐░▌      ▐░▌  ▄▄▄▄█░█▄▄▄▄ ▐░█▄▄▄▄▄▄▄▄▄ ▐░▌ ▐░▌") 
-print(" ░░░░░░░░░░▌ ▐░▌       ▐░▌▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌▐░▌  ▐░▌")
-print(" ▀▀▀▀▀▀▀▀▀▀   ▀         ▀  ▀▀▀▀▀▀▀▀▀▀▀  ▀▀▀▀▀▀▀▀▀▀▀  ▀    ▀ \n")
+
+print("\n\n\n      ▄▄▄▄▄▄▄▄▄▄   ▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄▄  ▄    ▄ ")
+print("     ▐░░░░░░░░░░▌ ▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌▐░▌  ▐░▌")
+print("     ▐░█▀▀▀▀▀▀▀█░▌▐░█▀▀▀▀▀▀▀█░▌ ▀▀▀▀█░█▀▀▀▀ ▐░█▀▀▀▀▀▀▀▀▀ ▐░▌ ▐░▌") 
+print("     ▐░▌       ▐░▌▐░▌       ▐░▌     ▐░▌     ▐░▌          ▐░▌▐░▌")  
+print("     ▐░▌       ▐░▌▐░█▄▄▄▄▄▄▄█░▌     ▐░▌     ▐░▌          ▐░▌░▌")   
+print("     ▐░▌       ▐░▌▐░░░░░░░░░░░▌     ▐░▌     ▐░▌          ▐░░▌")    
+print("     ▐░▌       ▐░▌▐░█▀▀▀▀█░█▀▀      ▐░▌     ▐░▌          ▐░▌░▌")   
+print("     ▐░▌       ▐░▌▐░▌     ▐░▌       ▐░▌     ▐░▌          ▐░▌▐░▌")  
+print("     ▐░█▄▄▄▄▄▄▄█░▌▐░▌      ▐░▌  ▄▄▄▄█░█▄▄▄▄ ▐░█▄▄▄▄▄▄▄▄▄ ▐░▌ ▐░▌") 
+print("      ░░░░░░░░░░▌ ▐░▌       ▐░▌▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌▐░▌  ▐░▌")
+print("      ▀▀▀▀▀▀▀▀▀▀   ▀         ▀  ▀▀▀▀▀▀▀▀▀▀▀  ▀▀▀▀▀▀▀▀▀▀▀  ▀    ▀ \n")
                                                             
 
 print("\n\n############  ########  ##### ### ######  ########  ######## # ##  #####")
